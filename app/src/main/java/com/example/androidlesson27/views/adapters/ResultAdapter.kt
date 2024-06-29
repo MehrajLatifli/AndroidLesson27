@@ -16,7 +16,6 @@ class ResultAdapter : RecyclerView.Adapter<ResultAdapter.ResultViewHolder>() {
     private val list = mutableListOf<WeatherResponse>()
     private var lastSelectedItemPosition = RecyclerView.NO_POSITION
 
-    lateinit var onClickItem: (String) -> Unit
 
     inner class ResultViewHolder(val itemBinding: ItemResultBinding) :
         RecyclerView.ViewHolder(itemBinding.root)
