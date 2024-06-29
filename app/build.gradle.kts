@@ -12,7 +12,7 @@ plugins {
 
 
 android {
-    namespace = "com.example.androidlesson27"
+    namespace = "com.example.weathertomorrow"
     compileSdk = 34
 
     buildFeatures {
@@ -28,7 +28,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.androidlesson27"
+        applicationId = "com.example.weathertomorrow"
         minSdk = 33
         targetSdk = 34
         versionCode = 1

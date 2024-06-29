@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AndroidLesson27"
+rootProject.name = "Weather Tomorrow.io"
 include(":app")
