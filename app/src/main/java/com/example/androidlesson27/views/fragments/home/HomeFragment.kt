@@ -95,7 +95,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             // Argentina
             "Buenos Aires", "Cordoba", "Rosario", "Mendoza", "San Miguel de Tucuman",
             // South Africa
-            "Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth"
+            "Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth",
+            // Indonesia
+            "Jakarta", "Surabaya", "Bandung", "Medan", "Semarang",
+            // Indonesia
+            "Jakarta", "Surabaya", "Bandung", "Medan", "Semarang",
+            //Croatia
+            "Zagreb", "Split", "Rijeka", "Osijek", "Zadar",
+            //Czech Republic
+            "Prague", "Brno", "Ostrava", "Pilsen", "Liberec",
         )
 
 
