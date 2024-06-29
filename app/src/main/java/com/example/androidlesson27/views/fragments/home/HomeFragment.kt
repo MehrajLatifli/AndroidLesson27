@@ -104,6 +104,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             "Zagreb", "Split", "Rijeka", "Osijek", "Zadar",
             //Czech Republic
             "Prague", "Brno", "Ostrava", "Pilsen", "Liberec",
+            //SAR
+            "Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth",
         )
 
 
