@@ -53,7 +53,7 @@ class HomeViewModel @Inject constructor(
                         Log.e("Weather", _weathers.value.toString())
 
                         itemResponse.toWeatherEntity().let { weatherEntity ->
-                            delay(500) // Example delay, remove in production
+                            delay(500)
                             withContext(Dispatchers.IO) {
                                 try {
                                     repoEntity.addWeatherEntity(weatherEntity)

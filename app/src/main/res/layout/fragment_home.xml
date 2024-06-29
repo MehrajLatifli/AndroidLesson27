@@ -5,6 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:backgroundTint="@color/darkknight"
+    android:background="@color/darkknight"
+    android:backgroundTintMode="add"
     tools:context=".views.fragments.home.HomeFragment">
 
 
@@ -25,11 +28,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5"
         android:elevation="20dp"
-        android:backgroundTint="@color/burntsienna"
-        android:progressTint="@color/burntsienna"
+        android:backgroundTint="@color/white"
+        android:progressTint="@color/white"
         android:indeterminate="true"
         android:indeterminateTintMode="src_atop"
-        android:indeterminateTint="@color/burntsienna"/>
+        android:indeterminateTint="@color/white"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleViewCity"

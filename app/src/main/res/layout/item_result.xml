@@ -16,17 +16,17 @@
         android:background="@color/white"
         app:cardCornerRadius="25dp"
         app:cardElevation="5dp"
-        app:strokeColor="@color/brown"
+        app:strokeColor="@color/bluedarknut"
         app:strokeWidth="5dp"
         android:angle="90"
-        android:outlineAmbientShadowColor="@color/brown"
-        android:outlineSpotShadowColor="@color/brown">
+        android:outlineAmbientShadowColor="@color/bluedarknut"
+        android:outlineSpotShadowColor="@color/bluedarknut">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/brown">
+            android:background="@color/bluedarknut">
 
 
             <TextView

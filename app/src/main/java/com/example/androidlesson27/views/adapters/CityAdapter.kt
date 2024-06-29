@@ -34,13 +34,13 @@ class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>() {
         holder.itemBinding.constraintLayout.setBackgroundColor(
             ContextCompat.getColor(
                 holder.itemView.context,
-                if (isSelected) R.color.white else R.color.burntsienna
+                if (isSelected) R.color.white else R.color.bluedarknut
             )
         )
         holder.itemBinding.textView7.setTextColor(
             ContextCompat.getColor(
                 holder.itemView.context,
-                if (isSelected) R.color.burntsienna else R.color.white
+                if (isSelected) R.color.bluedarknut else R.color.white
             )
         )
 

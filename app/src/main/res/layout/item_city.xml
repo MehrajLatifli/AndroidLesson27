@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:cardCornerRadius="10dp"
-        app:strokeColor="@color/burntsienna"
+        app:strokeColor="@color/bluedarknut"
         android:angle="90"
         app:strokeWidth="2dp">
 
@@ -21,7 +21,7 @@
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/burntsienna">
+            android:background="@color/bluedarknut">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"

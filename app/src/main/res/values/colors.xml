@@ -3,7 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparant">#00000000</color>
-    <color name="brown">#A52A2A</color>
-    <color name="burntsienna">#E97451</color>
     <color name="darkgray">#A9A9A9</color>
+    <color name="darkknight">#17152E</color>
+    <color name="bluedarknut">#0072F5</color>
 </resources>
