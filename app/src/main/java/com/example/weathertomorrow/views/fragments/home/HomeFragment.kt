@@ -2,6 +2,7 @@ package com.example.weathertomorrow.views.fragments.home
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weathertomorrow.databinding.FragmentHomeBinding
@@ -118,8 +119,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
             errorMessage?.let {
 
+             /*
                 val snackbar = Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG)
                 snackbar.show()
+              */
+
+
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+
+
             }
         }
 
