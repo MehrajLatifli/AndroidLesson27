@@ -55,13 +55,14 @@ class HomeViewModel @Inject constructor(
 
 
                         val weatherEntity = itemResponse.toWeatherEntity()
-                        withContext(Dispatchers.IO) {
+
                             try {
+                                delay(150)
                                 repoEntity.addWeatherEntity(weatherEntity)
                             } catch (e: Exception) {
                                 Log.e("DatabaseError", "Error adding weather entity: ${e.message}")
                             }
-                        }
+
                     } else {
                         _error.value = "No weather found"
                         _weathers.value = emptyList()
@@ -74,19 +75,25 @@ class HomeViewModel @Inject constructor(
                     Log.e("APIFailed", _error.value.toString())
 
 
-                    withContext(Dispatchers.IO) {
+
                         try {
+
+                            delay(150)
+                            _loading.value = true
                             val weatherEntities = repoEntity.getWeatherEntity()
 
 
-                            withContext(Dispatchers.Main) {
+
+
+                                delay(150)
+                                _loading.value = false
                                 if (weatherEntities.isNotEmpty()) {
                                     _weathers.value = weatherEntities.map { it.toWeatherResponse() }
                                 } else {
                                     _error.value = "No cached weather found"
                                     _weathers.value = emptyList()
                                 }
-                            }
+
                         } catch (e: Exception) {
                             Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
 
@@ -97,7 +104,7 @@ class HomeViewModel @Inject constructor(
                             }
                         }
                     }
-                }
+
             }
         }
     }
