@@ -42,6 +42,7 @@ class HomeViewModel @Inject constructor(
 
     fun getRealtimeWeatherbyCity(city: String) {
         _loading.value = true
+
         viewModelScope.launch {
             val response = repo.getRealtimeWeatherbyCity(city)
             when (response) {
@@ -52,46 +53,53 @@ class HomeViewModel @Inject constructor(
                         _weathers.value = listOf(itemResponse)
                         Log.e("Weather", _weathers.value.toString())
 
-                        itemResponse.toWeatherEntity().let { weatherEntity ->
 
-                            delay(100)
-                            withContext(Dispatchers.IO) {
-                                try {
-                                    repoEntity.addWeatherEntity(weatherEntity)
-                                } catch (e: Exception) {
-                                    Log.e("DatabaseError", "Error adding weather entity: ${e.message}")
-                                }
+                        val weatherEntity = itemResponse.toWeatherEntity()
+                        withContext(Dispatchers.IO) {
+                            try {
+                                repoEntity.addWeatherEntity(weatherEntity)
+                            } catch (e: Exception) {
+                                Log.e("DatabaseError", "Error adding weather entity: ${e.message}")
                             }
                         }
                     } else {
-                        _error.value = "No weathers found"
+                        _error.value = "No weather found"
                         _weathers.value = emptyList()
                         Log.e("APIFailed", _error.value.toString())
                     }
                 }
                 is Resource.Error -> {
                     _loading.value = false
-                    _error.value = "Failed to fetch weathers: ${response.message}"
+                    _error.value = "Failed to fetch weather: ${response.message}"
                     Log.e("APIFailed", _error.value.toString())
 
-                    delay(100)
+
                     withContext(Dispatchers.IO) {
                         try {
                             val weatherEntities = repoEntity.getWeatherEntity()
-                            if (weatherEntities.isNotEmpty()) {
-                                _weathers.value = weatherEntities.map { it.toWeatherResponse() }
-                            } else {
-                                _error.value = "No cached weather found"
-                                _weathers.value = emptyList()
+
+
+                            withContext(Dispatchers.Main) {
+                                if (weatherEntities.isNotEmpty()) {
+                                    _weathers.value = weatherEntities.map { it.toWeatherResponse() }
+                                } else {
+                                    _error.value = "No cached weather found"
+                                    _weathers.value = emptyList()
+                                }
                             }
                         } catch (e: Exception) {
                             Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
-                            _error.value = "Error converting cached data: ${e.message}"
-                            _weathers.value = emptyList()
+
+
+                            withContext(Dispatchers.Main) {
+                                _error.value = "Error getting cached data: ${e.message}"
+                                _weathers.value = emptyList()
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }

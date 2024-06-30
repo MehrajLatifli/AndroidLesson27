@@ -28,6 +28,7 @@ class WeatherRepository @Inject constructor(private val api: IApiManager) {
                 if (response.isSuccessful) {
                     Resource.Success(response.body())
                 } else {
+                    Log.e("Response error",response.message())
                     Resource.Error(response.message())
                 }
             } catch (e: Exception) {
