@@ -53,7 +53,8 @@ class HomeViewModel @Inject constructor(
                         Log.e("Weather", _weathers.value.toString())
 
                         itemResponse.toWeatherEntity().let { weatherEntity ->
-                            delay(500)
+
+                            delay(100)
                             withContext(Dispatchers.IO) {
                                 try {
                                     repoEntity.addWeatherEntity(weatherEntity)
@@ -73,18 +74,21 @@ class HomeViewModel @Inject constructor(
                     _error.value = "Failed to fetch weathers: ${response.message}"
                     Log.e("APIFailed", _error.value.toString())
 
-                    try {
-                        val weatherEntities = repoEntity.getWeatherEntity()
-                        if (weatherEntities.isNotEmpty()) {
-                            _weathers.value = weatherEntities.map { it.toWeatherResponse() }
-                        } else {
-                            _error.value = "No cached weather found"
+                    delay(100)
+                    withContext(Dispatchers.IO) {
+                        try {
+                            val weatherEntities = repoEntity.getWeatherEntity()
+                            if (weatherEntities.isNotEmpty()) {
+                                _weathers.value = weatherEntities.map { it.toWeatherResponse() }
+                            } else {
+                                _error.value = "No cached weather found"
+                                _weathers.value = emptyList()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
+                            _error.value = "Error converting cached data: ${e.message}"
                             _weathers.value = emptyList()
                         }
-                    } catch (e: Exception) {
-                        Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
-                        _error.value = "Error converting cached data: ${e.message}"
-                        _weathers.value = emptyList()
                     }
                 }
             }
