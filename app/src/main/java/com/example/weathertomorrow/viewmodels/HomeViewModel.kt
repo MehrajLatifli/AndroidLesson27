@@ -55,14 +55,14 @@ class HomeViewModel @Inject constructor(
 
 
                         val weatherEntity = itemResponse.toWeatherEntity()
-                        withContext(Dispatchers.IO) {
+
                             try {
                                 delay(150)
                                 repoEntity.addWeatherEntity(weatherEntity)
                             } catch (e: Exception) {
                                 Log.e("DatabaseError", "Error adding weather entity: ${e.message}")
                             }
-                        }
+
                     } else {
                         _error.value = "No weather found"
                         _weathers.value = emptyList()
@@ -75,15 +75,16 @@ class HomeViewModel @Inject constructor(
                     Log.e("APIFailed", _error.value.toString())
 
 
-                    withContext(Dispatchers.IO) {
+
                         try {
 
+                            _loading.value = true
                             delay(150)
 
                             val weatherEntities = repoEntity.getWeatherEntity()
 
 
-                            withContext(Dispatchers.Main) {
+
 
                                 delay(150)
 
@@ -93,18 +94,20 @@ class HomeViewModel @Inject constructor(
                                     _error.value = "No cached weather found"
                                     _weathers.value = emptyList()
                                 }
-                            }
+
+                                _loading.value = false
+
                         } catch (e: Exception) {
                             Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
 
 
-                            withContext(Dispatchers.Main) {
+
                                 delay(150)
                                 _error.value = "Error getting cached data: ${e.message}"
                                 _weathers.value = emptyList()
-                            }
+
                         }
-                    }
+
                 }
             }
         }
