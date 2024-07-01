@@ -13,7 +13,7 @@ import com.example.weathertomorrow.source.local.mapping.toWeatherEntity
 import com.example.weathertomorrow.source.local.mapping.toWeatherResponse
 import com.example.weathertomorrow.source.local.repositories.EntityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,7 +42,8 @@ class HomeViewModel @Inject constructor(
         _loading.value = true
 
         viewModelScope.launch {
-            repo.getRealtimeWeatherbyCity(city).collectLatest { response: Resource<WeatherResponse> ->
+            try {
+                repo.getRealtimeWeatherbyCity(city).collectLatest { response: Resource<WeatherResponse> ->
                     when (response) {
                         is Resource.Success -> {
                             _loading.value = false
@@ -53,58 +54,61 @@ class HomeViewModel @Inject constructor(
 
                                 val weatherEntity = itemResponse.toWeatherEntity()
 
-                                try {
-                                    delay(150)
-                                    repoEntity.addWeatherEntity(weatherEntity)
-                                } catch (e: Exception) {
-                                    Log.e(
-                                        "DatabaseError",
-                                        "Error adding weather entity: ${e.message}"
-                                    )
-                                }
+                                saveWeatherEntity(weatherEntity)
                             } else {
                                 _error.value = "No weather found"
                                 _weathers.value = emptyList()
                                 Log.e("APIFailed", _error.value.toString())
                             }
                         }
-
                         is Resource.Error -> {
                             _loading.value = false
                             _error.value = "Failed to fetch weather: ${response.message}"
                             Log.e("APIFailed", _error.value.toString())
 
-                            try {
-                                _loading.value = true
-                                delay(150)
-
-                                val weatherEntities = repoEntity.getWeatherEntities()
-
-                                weatherEntities.collectLatest { entities: List<WeatherEntity> ->
-                                    delay(150)
-
-                                    if (entities.isNotEmpty()) {
-                                        _weathers.value = entities.map { it.toWeatherResponse() }
-                                    } else {
-                                        _error.value = "No cached weather found"
-                                        _weathers.value = emptyList()
-                                    }
-
-                                    _loading.value = false
-                                }
-                            } catch (e: Exception) {
-                                Log.e(
-                                    "DatabaseError",
-                                    "Error getting weather entities: ${e.message}"
-                                )
-
-                                delay(150)
-                                _error.value = "Error getting cached data: ${e.message}"
-                                _weathers.value = emptyList()
-                            }
+                            fetchCachedWeather()
                         }
                     }
                 }
+            } catch (e: Exception) {
+                _loading.value = false
+                _error.value = "Exception occurred: ${e.message}"
+                Log.e("APIFailed", _error.value.toString())
+
+                fetchCachedWeather()
+            }
+        }
+    }
+
+    private fun saveWeatherEntity(weatherEntity: WeatherEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repoEntity.addWeatherEntity(weatherEntity)
+            } catch (e: Exception) {
+                Log.e("DatabaseError", "Error adding weather entity: ${e.message}")
+            }
+        }
+    }
+
+    private fun fetchCachedWeather() {
+        viewModelScope.launch {
+            try {
+                repoEntity.getWeatherEntities().collectLatest { entities: List<WeatherEntity> ->
+                    if (entities.isNotEmpty()) {
+                        _weathers.value = entities.map { it.toWeatherResponse() }
+                    } else {
+                        _error.value = "No cached weather found"
+                        _weathers.value = emptyList()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
+
+                _error.value = "Error getting cached data: ${e.message}"
+                _weathers.value = emptyList()
+            } finally {
+                _loading.value = false
+            }
         }
     }
 }

@@ -2,8 +2,10 @@ package com.example.weathertomorrow.source.local.repositories
 
 import com.example.weathertomorrow.models.entities.WeatherEntity
 import com.example.weathertomorrow.source.local.LocalDao
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class EntityRepository @Inject constructor(
@@ -13,6 +15,6 @@ class EntityRepository @Inject constructor(
 
 
     fun getWeatherEntities(): Flow<List<WeatherEntity>> {
-        return localDao.getWeatherEntities()
+        return localDao.getWeatherEntities().flowOn(Dispatchers.IO)
     }
 }
