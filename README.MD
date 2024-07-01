@@ -1,4 +1,4 @@
-## Weather Tomorrow.io (MVVM architectural pattern, Coroutines, Dependency injection with Hilt, Room, safeApiReguest, BaseFragment, Interceptor in Kotlin)
+## Weather Tomorrow.io (MVVM architectural pattern, Coroutines, Dependency injection with Hilt, Room, safeApiReguest, BaseFragment, Interceptor, Flow in Kotlin)
 
 <br/>
 <br/>
