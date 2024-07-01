@@ -26,6 +26,7 @@ class WeatherRepository @Inject constructor(private val api: IApiManager) {
     */
 
 
+
    suspend fun getRealtimeWeatherbyCity(city:String) =safeApiRequest{
 
         api.getRealtimeWeatherbyCity(city)
