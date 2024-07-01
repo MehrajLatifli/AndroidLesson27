@@ -1,5 +1,3 @@
-// HomeViewModel.kt
-
 package com.example.weathertomorrow.viewmodels
 
 import android.util.Log
@@ -7,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weathertomorrow.models.entities.WeatherEntity
 import com.example.weathertomorrow.models.responses.get.WeatherResponse
 import com.example.weathertomorrow.source.api.Resource
 import com.example.weathertomorrow.source.api.repositories.WeatherRepository
@@ -14,10 +13,9 @@ import com.example.weathertomorrow.source.local.mapping.toWeatherEntity
 import com.example.weathertomorrow.source.local.mapping.toWeatherResponse
 import com.example.weathertomorrow.source.local.repositories.EntityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,73 +42,69 @@ class HomeViewModel @Inject constructor(
         _loading.value = true
 
         viewModelScope.launch {
-            val response = repo.getRealtimeWeatherbyCity(city)
-            when (response) {
-                is Resource.Success -> {
-                    _loading.value = false
-                    val itemResponse = response.data
-                    if (itemResponse != null) {
-                        _weathers.value = listOf(itemResponse)
-                        Log.e("Weather", _weathers.value.toString())
+            repo.getRealtimeWeatherbyCity(city).collectLatest { response: Resource<WeatherResponse> ->
+                    when (response) {
+                        is Resource.Success -> {
+                            _loading.value = false
+                            val itemResponse = response.data
+                            if (itemResponse != null) {
+                                _weathers.value = listOf(itemResponse)
+                                Log.e("Weather", _weathers.value.toString())
 
+                                val weatherEntity = itemResponse.toWeatherEntity()
 
-                        val weatherEntity = itemResponse.toWeatherEntity()
+                                try {
+                                    delay(150)
+                                    repoEntity.addWeatherEntity(weatherEntity)
+                                } catch (e: Exception) {
+                                    Log.e(
+                                        "DatabaseError",
+                                        "Error adding weather entity: ${e.message}"
+                                    )
+                                }
+                            } else {
+                                _error.value = "No weather found"
+                                _weathers.value = emptyList()
+                                Log.e("APIFailed", _error.value.toString())
+                            }
+                        }
+
+                        is Resource.Error -> {
+                            _loading.value = false
+                            _error.value = "Failed to fetch weather: ${response.message}"
+                            Log.e("APIFailed", _error.value.toString())
 
                             try {
-                                delay(150)
-                                repoEntity.addWeatherEntity(weatherEntity)
-                            } catch (e: Exception) {
-                                Log.e("DatabaseError", "Error adding weather entity: ${e.message}")
-                            }
-
-                    } else {
-                        _error.value = "No weather found"
-                        _weathers.value = emptyList()
-                        Log.e("APIFailed", _error.value.toString())
-                    }
-                }
-                is Resource.Error -> {
-                    _loading.value = false
-                    _error.value = "Failed to fetch weather: ${response.message}"
-                    Log.e("APIFailed", _error.value.toString())
-
-
-
-                        try {
-
-                            _loading.value = true
-                            delay(150)
-
-                            val weatherEntities = repoEntity.getWeatherEntity()
-
-
-
-
+                                _loading.value = true
                                 delay(150)
 
-                                if (weatherEntities.isNotEmpty()) {
-                                    _weathers.value = weatherEntities.map { it.toWeatherResponse() }
-                                } else {
-                                    _error.value = "No cached weather found"
-                                    _weathers.value = emptyList()
+                                val weatherEntities = repoEntity.getWeatherEntities()
+
+                                weatherEntities.collectLatest { entities: List<WeatherEntity> ->
+                                    delay(150)
+
+                                    if (entities.isNotEmpty()) {
+                                        _weathers.value = entities.map { it.toWeatherResponse() }
+                                    } else {
+                                        _error.value = "No cached weather found"
+                                        _weathers.value = emptyList()
+                                    }
+
+                                    _loading.value = false
                                 }
-
-                                _loading.value = false
-
-                        } catch (e: Exception) {
-                            Log.e("DatabaseError", "Error getting weather entities: ${e.message}")
-
-
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "DatabaseError",
+                                    "Error getting weather entities: ${e.message}"
+                                )
 
                                 delay(150)
                                 _error.value = "Error getting cached data: ${e.message}"
                                 _weathers.value = emptyList()
-
+                            }
                         }
-
+                    }
                 }
-            }
         }
     }
-
 }
